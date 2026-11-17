@@ -1,0 +1,2694 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIQuest — رحلة الذكاء الاصطناعي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script>
+(function() {
+  const stored = localStorage.getItem("ai_theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = stored || (prefersDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+<style>
+:root {
+  /* Warm Parchment Palette */
+  --bg: #fbf4ea;
+  --card: #f2ebe2;
+  --surface-inset: #e8e0d5;
+  --text: #000000;
+  --text-sec: #393939;
+  --muted: #525151;
+  --line: #dcd5cc;
+  --primary: #7a1f33;
+  --primary-hover: #5e1827;
+  --primary-text: #fcfcfd;
+  --ok: #115e3b;
+  --okbg: #dcf2e6;
+  --bad: #9e1c1c;
+  --badbg: #f9e1e1;
+  --gold: #b3821a;
+
+  /* Inverse Ground / Boss Banner */
+  --boss-bg: #141314;
+  --boss-surface: #1e1c1e;
+  --boss-text: #fcfcfd;
+  --boss-line: #332f33;
+
+  /* Typography */
+  --font-serif: "EB Garamond", "Tajawal", Georgia, serif;
+  --font-sans: "Host Grotesk", "Tajawal", system-ui, -apple-system, sans-serif;
+  --font-ar: "Tajawal", "Host Grotesk", system-ui, -apple-system, sans-serif;
+  --font-code: ui-monospace, "SF Mono", "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+
+  /* Geometric rules */
+  --radius: 8px;
+  --sh: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --sh-hover: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+[data-theme="dark"] {
+  --bg: #141314;
+  --card: #1e1c1e;
+  --surface-inset: #262326;
+  --text: #fcfcfd;
+  --text-sec: #dcd5cc;
+  --muted: #9e9a98;
+  --line: #332f33;
+  --primary: #942b42;
+  --primary-hover: #ad3751;
+  --primary-text: #fcfcfd;
+  --ok: #5ef0b0;
+  --okbg: #0d3a2c;
+  --bad: #ff9d94;
+  --badbg: #44201f;
+  --gold: #e5a93b;
+  --boss-bg: #0c0b0c;
+  --boss-surface: #181618;
+  --boss-text: #fcfcfd;
+  --boss-line: #2b272b;
+  --sh: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --sh-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141314;
+    --card: #1e1c1e;
+    --surface-inset: #262326;
+    --text: #fcfcfd;
+    --text-sec: #dcd5cc;
+    --muted: #9e9a98;
+    --line: #332f33;
+    --primary: #942b42;
+    --primary-hover: #ad3751;
+    --primary-text: #fcfcfd;
+    --ok: #5ef0b0;
+    --okbg: #0d3a2c;
+    --bad: #ff9d94;
+    --badbg: #44201f;
+    --gold: #e5a93b;
+    --boss-bg: #0c0b0c;
+    --boss-surface: #181618;
+    --boss-text: #fcfcfd;
+    --boss-line: #2b272b;
+    --sh: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --sh-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ar);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Suppress legacy sci-fi animations and glowing floating objects */
+.bub, .rp, .fx {
+  display: none !important;
+}
+
+/* Header */
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  padding: 24px 24px 22px;
+  position: relative;
+  z-index: 10;
+  box-shadow: var(--sh);
+}
+
+.header-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-brand h1 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.header-badge {
+  font-family: var(--font-ar);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-inset);
+  border: 1px solid var(--line);
+  padding: 3px 10px;
+  border-radius: var(--radius);
+  letter-spacing: 0.2px;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface-inset);
+  border: 1px solid var(--line);
+  color: var(--text-sec);
+  padding: 7px 16px;
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  min-height: 38px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-inset);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.theme-toggle .icon-sun {
+  display: none;
+}
+
+.theme-toggle .icon-moon {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+header p {
+  margin: 10px 0 0;
+  font-family: var(--font-ar);
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Main Container */
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Lectures Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 20px;
+}
+
+.lec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: right;
+  font: inherit;
+  color: inherit;
+  min-height: 48px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--sh);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.lec:hover,
+.lec:focus-visible {
+  border-color: var(--primary);
+  box-shadow: var(--sh-hover);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.lec:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.lec > .art {
+  flex: 0 0 100%;
+  height: 112px;
+  color: var(--primary);
+  background: var(--surface-inset);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.art svg {
+  height: 74%;
+  width: auto;
+  max-width: 88%;
+}
+
+.lec > .ring {
+  margin: 0 0 16px;
+  margin-inline-start: 16px;
+}
+
+.ring {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: conic-gradient(var(--primary) calc(var(--p, 0) * 1%), var(--line) 0);
+  transition: background 0.6s ease;
+}
+
+.ring .badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: none;
+}
+
+.lec > div:last-child {
+  padding: 0 0 16px;
+  padding-inline-end: 16px;
+  padding-inline-start: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.lec b {
+  display: block;
+  font-family: var(--font-ar);
+  font-size: 17.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.lec span {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  direction: ltr;
+  text-align: right;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
+.lec small {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-sec);
+  font-family: var(--font-ar);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mini {
+  display: block;
+  height: 4px;
+  background: var(--line);
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.mini b {
+  display: block;
+  height: 100%;
+  background: var(--primary) !important;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Global Mistakes Card (.mistakes-card) */
+.mistakes-card {
+  grid-column: 1 / -1;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text);
+  box-shadow: var(--sh);
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.mistakes-card.has-mistakes {
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+.mistakes-card.has-mistakes:hover,
+.mistakes-card.has-mistakes:focus-visible {
+  border-color: var(--bad);
+  box-shadow: 0 4px 18px rgba(158, 28, 28, 0.18);
+  transform: translateY(-2px);
+  cursor: pointer;
+  outline: none;
+}
+
+.mistakes-card.has-mistakes:focus-visible {
+  outline: 2px solid var(--bad);
+  outline-offset: 2px;
+}
+
+.mistakes-card.empty {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.mistakes-card .art {
+  background: var(--surface-inset);
+  color: var(--bad);
+}
+
+[data-theme="dark"] .mistakes-card.has-mistakes {
+  border-color: rgba(255, 157, 148, 0.35);
+}
+
+[data-theme="dark"] .mistakes-card.has-mistakes:hover {
+  box-shadow: 0 6px 20px rgba(255, 157, 148, 0.25);
+}
+
+.mistakes-card .ring {
+  background: conic-gradient(var(--bad) calc(var(--p, 0) * 1%), var(--line) 0);
+}
+
+.mistakes-card .ring .badge {
+  background: var(--card);
+  color: var(--bad);
+  border-color: var(--line);
+}
+
+.mistakes-card b {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--text);
+}
+
+.mistakes-card span {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-sec);
+}
+
+.mistakes-card small {
+  color: var(--bad);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.mistakes-card.empty small {
+  color: var(--ok);
+}
+
+.btn-clear-mistakes {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--font-ar);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-clear-mistakes:hover {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+/* Mixed Challenge Card (.boss) */
+.boss {
+  grid-column: 1 / -1;
+  background: var(--boss-bg);
+  border-color: var(--boss-line);
+  color: var(--boss-text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.boss:hover,
+.boss:focus-visible {
+  border-color: var(--gold);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+.boss:focus-visible {
+  outline: 2px solid var(--gold);
+}
+
+.boss .art {
+  background: var(--boss-surface);
+  border-bottom: 1px solid var(--boss-line);
+  color: var(--gold);
+}
+
+.boss .ring {
+  background: conic-gradient(var(--gold) calc(var(--p, 100) * 1%), var(--boss-line) 0);
+}
+
+.boss .ring .badge {
+  background: var(--boss-surface);
+  color: var(--gold);
+  border-color: var(--boss-line);
+}
+
+.boss b {
+  color: var(--boss-text);
+  font-family: var(--font-serif);
+  font-size: 20px;
+  letter-spacing: -0.2px;
+}
+
+.boss span {
+  color: #dcd5cc;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+.boss small {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.boss .mini b {
+  background: var(--gold) !important;
+}
+
+/* Active Quiz / Flashcard View (.q) */
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: var(--primary);
+  color: var(--primary-text);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.link {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text-sec);
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  touch-action: manipulation;
+}
+
+.link:hover,
+.link:focus-visible {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--surface-inset);
+  outline: none;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.mid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qr {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  background: conic-gradient(var(--primary) calc(var(--p, 0) * 1%), var(--line) 0);
+  transition: background 0.6s ease;
+}
+
+.qr::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--card);
+  z-index: -1;
+}
+
+.qr span {
+  color: var(--text);
+}
+
+.qr.er {
+  background: conic-gradient(var(--bad) calc(var(--p, 0) * 1%), var(--line) 0);
+}
+
+.qr.er span {
+  color: var(--bad);
+  font-weight: 700;
+}
+
+.sc {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 4px 12px;
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.sc.fire {
+  background: #fff8f0;
+  border-color: #e5a93b;
+  color: #9c5c06;
+}
+
+[data-theme="dark"] .sc.fire {
+  background: #2b1d0d;
+  border-color: #a15d07;
+  color: #f5b759;
+}
+
+.prog {
+  height: 6px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.prog i {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.35s ease;
+}
+
+.q {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 30px 26px;
+  box-shadow: var(--sh);
+}
+
+.q .kind {
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.q h2 {
+  margin: 0 0 22px;
+  font-family: var(--font-sans);
+  white-space: pre-wrap;
+  font-size: 20px;
+  direction: ltr;
+  text-align: left;
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+#opts {
+  counter-reset: o;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  direction: ltr;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overflow-wrap: anywhere;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.opt::before {
+  counter-increment: o;
+  content: counter(o, upper-alpha);
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--surface-inset);
+  color: var(--text-sec);
+  border: 1px solid var(--line);
+  transition: all 0.15s ease;
+}
+
+.opt:hover:not(:disabled) {
+  background: var(--card);
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.opt:hover:not(:disabled)::before {
+  background: var(--primary);
+  color: var(--primary-text);
+  border-color: var(--primary);
+}
+
+.opt:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.opt:disabled {
+  cursor: default;
+}
+
+.opt.ok {
+  background: var(--okbg) !important;
+  border-color: var(--ok) !important;
+  color: var(--ok) !important;
+  font-weight: 700;
+}
+
+.opt.ok::before {
+  content: "✓";
+  background: var(--ok) !important;
+  color: #fff !important;
+  border-color: var(--ok) !important;
+}
+
+.opt.bad {
+  background: var(--badbg) !important;
+  border-color: var(--bad) !important;
+  color: var(--bad) !important;
+  font-weight: 700;
+}
+
+.opt.bad::before {
+  content: "✕";
+  background: var(--bad) !important;
+  color: #fff !important;
+  border-color: var(--bad) !important;
+}
+
+.tf {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tf .opt {
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  font-weight: 700;
+  font-size: 16.5px;
+}
+
+.tf .opt::before {
+  display: none;
+}
+
+.fb {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid transparent;
+}
+
+.fb.ok {
+  background: var(--okbg);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.fb.bad {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.fb em {
+  display: block;
+  font-style: normal;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  direction: ltr;
+  text-align: left;
+  margin-top: 6px;
+  font-size: 14.5px;
+  opacity: 0.95;
+}
+
+#ans-box {
+  background: var(--card) !important;
+  border: 1px solid var(--line) !important;
+  border-inline-start: 4px solid var(--primary) !important;
+  border-inline-end: 1px solid var(--line) !important;
+  color: var(--text) !important;
+  border-radius: var(--radius) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  background: var(--primary);
+  color: var(--primary-text);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 28px;
+  min-height: 48px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn.alt {
+  background: var(--surface-inset);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.btn.alt:hover {
+  background: var(--card);
+  border-color: var(--text-sec);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Results & Review View (.res) */
+.res {
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 38px 24px;
+  box-shadow: var(--sh);
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.res > div:first-child {
+  font-family: var(--font-ar);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.rank {
+  font-family: var(--font-ar);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 12px 0 20px;
+}
+
+.rank b {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--primary);
+  margin: 0 6px;
+}
+
+.rank small {
+  display: block;
+  font-family: var(--font-ar);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.rings {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 6vw, 44px);
+  margin: 24px 0 20px;
+  flex-wrap: wrap;
+}
+
+.rings figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rings figcaption {
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-sec);
+  margin-top: 10px;
+}
+
+.res .n {
+  width: clamp(100px, 28vw, 128px);
+  height: clamp(100px, 28vw, 128px);
+  border-radius: 50%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 6vw, 36px);
+  font-weight: 700;
+  color: var(--ok);
+  position: relative;
+  isolation: isolate;
+  background: conic-gradient(var(--ok) calc(var(--p, 0) * 1%), var(--line) 0);
+  transition: background 0.8s ease;
+}
+
+.res .n::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--card);
+  z-index: -1;
+}
+
+.res .n2 {
+  background: conic-gradient(var(--bad) calc(var(--p, 0) * 1%), var(--line) 0) !important;
+  color: var(--bad) !important;
+}
+
+.res p {
+  font-family: var(--font-ar);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 16px 0 24px;
+  line-height: 1.5;
+}
+
+.rev {
+  margin-top: 32px;
+  text-align: right;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+
+.rev div {
+  direction: ltr;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  border: 1px solid transparent;
+  overflow-wrap: anywhere;
+}
+
+.rev .ok {
+  background: var(--okbg);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.rev .bad {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+/* Mobile & Accessibility */
+@media (max-width: 640px) {
+  header {
+    padding: 20px 16px 18px;
+  }
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .header-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+  main {
+    padding: 20px 16px 48px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .q {
+    padding: 20px 16px;
+  }
+  .q h2 {
+    font-size: 18px;
+  }
+  .opt {
+    padding: 11px 14px;
+    font-size: 15px;
+  }
+  .tf {
+    grid-template-columns: 1fr;
+  }
+  .btn {
+    width: 100%;
+  }
+  .res .btn {
+    width: 100%;
+    margin: 6px 0;
+  }
+  .lec > .art {
+    height: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Question Number Strip */
+.q-strip-wrap {
+  margin-bottom: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px 10px;
+  box-shadow: var(--sh);
+}
+
+.q-strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.q-strip-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.q-strip-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-sec);
+}
+
+.q-strip-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.q-strip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 8px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.q-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.q-strip::-webkit-scrollbar-track {
+  background: var(--surface-inset);
+  border-radius: 3px;
+}
+
+.q-strip::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 3px;
+}
+
+.q-strip::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+.q-pill {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--surface-inset);
+  color: var(--text-sec);
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.q-pill:hover:not(.active) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--card);
+}
+
+.q-pill:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Current active question */
+.q-pill.active {
+  background: #7a1f33 !important;
+  color: #fcfcfd !important;
+  border-color: #7a1f33 !important;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #7a1f33;
+  transform: translateY(-1px) scale(1.05);
+  font-weight: 800;
+  z-index: 2;
+}
+
+[data-theme="dark"] .q-pill.active {
+  background: #942b42 !important;
+  border-color: #942b42 !important;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #942b42;
+}
+
+/* Answered correctly */
+.q-pill.ok {
+  background: var(--okbg);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+/* Answered incorrectly */
+.q-pill.bad {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+/* Peeked / Revealed */
+.q-pill.peeked {
+  background: var(--surface-inset);
+  color: var(--gold);
+  border-color: var(--gold);
+  border-style: dashed;
+}
+
+/* Card Header with Peek Button */
+.q-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-peek {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-inset);
+  border: 1px dashed var(--line);
+  color: var(--text-sec);
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 5px 12px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+  min-height: 32px;
+}
+
+.btn-peek:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--card);
+}
+
+.btn-peek:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Bottom Persistent Navigation */
+.q-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.q-nav .btn {
+  margin-top: 0;
+  flex: 1 1 140px;
+  min-height: 46px;
+  padding: 10px 20px;
+  font-size: 15.5px;
+}
+
+.q-nav-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--muted);
+  padding: 0 6px;
+}
+
+@media (max-width: 640px) {
+  .q-nav {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .q-nav .btn {
+    width: 100%;
+    flex: none;
+  }
+  .q-nav-info {
+    order: -1;
+    margin-bottom: 4px;
+  }
+}
+
+
+pre {
+  background: var(--surface-inset);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  font-family: var(--font-code);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
+  white-space: pre-wrap;
+  direction: ltr;
+  text-align: left;
+}
+code {
+  font-family: var(--font-code);
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-wrap">
+    <div class="header-row">
+      <div class="header-brand">
+        <h1>AIQuest</h1>
+        <span class="header-badge">رحلة الذكاء الاصطناعي</span>
+      </div>
+      <div class="header-meta">
+        <span class="chip" id="cnt"></span>
+        <button id="tgl" class="theme-toggle" type="button" aria-label="تبديل المظهر">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span class="theme-label">المظهر</span>
+        </button>
+      </div>
+    </div>
+    <p>دليل ومسار تدريبي تفاعلي لمقرر الذكاء الاصطناعي · أسئلة واختبارات تفاعلية للشيتات والمحاضرات المقررة</p>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+// AIQuest Question Bank and Engine
+const M = (q, o, a) => ({ q, o, a });
+const T = (q, a) => ({ q, o: ["True", "False"], a: a ? 0 : 1, tf: 1 });
+const E = (q, a, desc, isCode) => ({ q, a, desc: desc || "", isCode: !!isCode });
+
+const L = [
+  {
+    "n": "المحاضرة الأولى",
+    "s": "Introduction to AI & Ecosystem",
+    "q": [
+      {
+        "q": "Which of the following best describes Classical AI?",
+        "o": [
+          "Systems that rely on hand-coded rules and logic",
+          "Systems that learn automatically from massive unstructured data",
+          "Multi-layered artificial neural networks with backpropagation",
+          "Quantum hardware designed specifically for complex optimization"
+        ],
+        "a": 0
+      },
+      {
+        "q": "What caused the \"AI Winter\"?",
+        "o": [
+          "Unprecedented financial profits and excessive commercial adoption",
+          "Unrealistic expectations and lack of computational power",
+          "Complete perfection of human-level reasoning algorithms",
+          "Global regulatory bans on artificial intelligence research"
+        ],
+        "a": 1
+      },
+      {
+        "q": "Which of the following is NOT typically considered a key subfield of AI?",
+        "o": [
+          "Computer Vision",
+          "Natural Language Processing (NLP)",
+          "Thermodynamics",
+          "Reinforcement Learning"
+        ],
+        "a": 2
+      },
+      {
+        "q": "Machine Learning is a subfield of AI.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Classical AI relied heavily on data-driven learning from large datasets.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "AI, Data Science, and Analytics are identical fields with no real differences.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "Ethical considerations in AI include fairness, transparency, and avoiding bias.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "The future of AI is universally agreed to be risk-free and without controversy.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "Deep Learning is based on artificial neural networks inspired by the human brain.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Natural Language Processing (NLP) and Computer Vision are examples of AI subfields.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Artificial Intelligence aims to create systems that can mimic aspects of human intelligence.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "The \"AI Winter\" refers to a period when AI research was thriving due to abundant funding.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "Real AI applications include recommendation systems, virtual assistants, and autonomous vehicles.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      }
+    ]
+  },
+  {
+    "n": "شيت 3 (الجزء الأول)",
+    "s": "Python Sets & Operations",
+    "q": [
+      {
+        "q": "Sets in Python can contain duplicate elements.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "The len() function is used to count the number of items in a set.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Sets can hold items of different data types.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Elements in a set can be accessed using an index.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "The add() method inserts a new element into a set.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "The remove() method does not raise an error if the element doesn’t exist.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "The | operator performs a union between two sets.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "The intersection of two sets gives elements present in both.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "A frozenset is a mutable type of set.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "Lists, tuples, or strings can be converted into sets using set().",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Which statement correctly creates an empty set?",
+        "o": [
+          "{}",
+          "set()",
+          "[]",
+          "set([])"
+        ],
+        "a": 1
+      },
+      {
+        "q": "What happens when a duplicate element is added to a set?",
+        "o": [
+          "Raises an error",
+          "Ignored",
+          "Replaced",
+          "Duplicated"
+        ],
+        "a": 1
+      },
+      {
+        "q": "Which method removes and returns a random element?",
+        "o": [
+          "pop()",
+          "remove()",
+          "delete()",
+          "discard()"
+        ],
+        "a": 0
+      },
+      {
+        "q": "What does A & B represent?",
+        "o": [
+          "Union",
+          "Difference",
+          "Intersection",
+          "Symmetric Difference"
+        ],
+        "a": 2
+      },
+      {
+        "q": "Which method gives elements that exist in the first set but not in the second?",
+        "o": [
+          "difference()",
+          "union()",
+          "intersection()",
+          "symmetric_difference()"
+        ],
+        "a": 0
+      },
+      {
+        "q": "Which operation gives items that are in either set, but not both?",
+        "o": [
+          "A | B",
+          "A & B",
+          "A - B",
+          "A ^ B"
+        ],
+        "a": 3
+      },
+      {
+        "q": "The discard() method differs from remove() because it:",
+        "o": [
+          "Removes duplicates only",
+          "Ignores missing elements",
+          "Raises an error",
+          "Adds elements"
+        ],
+        "a": 1
+      },
+      {
+        "q": "What is the output of max({2, 4, 1, 5})?",
+        "o": [
+          "2",
+          "1",
+          "4",
+          "5"
+        ],
+        "a": 3
+      },
+      {
+        "q": "Which of the following about frozenset is correct?",
+        "o": [
+          "It is immutable",
+          "It allows duplicates",
+          "It can be changed",
+          "It uses add()"
+        ],
+        "a": 0
+      },
+      {
+        "q": "Converting [1, 2, 2, 3] into a set results in:",
+        "o": [
+          "{1, 2, 3}",
+          "{1, 2, 2, 3}",
+          "[1, 2, 3]",
+          "(1, 2, 3)"
+        ],
+        "a": 0
+      }
+    ]
+  },
+  {
+    "n": "شيت 3 (الجزء الثاني)",
+    "s": "List Comprehension",
+    "q": [
+      {
+        "q": "In list comprehension, the for keyword must appear before the if condition.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "[x**2 for x in range(4)] produces [1, 4, 9, 16].",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "What is the output of the following list comprehension?\nresult = [x for x in range(5) if x % 2 == 0]\nprint(result)",
+        "o": [
+          "[1, 3, 5]",
+          "[0, 2, 4]",
+          "[2, 4]",
+          "[0, 1, 2, 3, 4]"
+        ],
+        "a": 1
+      },
+      {
+        "q": "Choose the correct list comprehension that generates squares of numbers from 1 to 5.",
+        "o": [
+          "[x^2 for x in range(1,6)]",
+          "[x**2 for x in range(1,6)]",
+          "[x*2 for x in range(1,6)]",
+          "(x**2 for x in range(1,6))"
+        ],
+        "a": 1
+      }
+    ]
+  },
+  {
+    "n": "شيت 4 (الجزء الثاني)",
+    "s": "Functions, Lambda & Unpacking",
+    "q": [
+      {
+        "q": "A lambda function must always have a name.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "Strings in Python are mutable objects.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 1,
+        "tf": 1
+      },
+      {
+        "q": "The format() method and f-strings are both used for string formatting.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "The *args parameter is used to accept a variable number of positional arguments.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "The **kwargs parameter allows passing a variable number of keyword arguments.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "In the LEGB rule, \"L\" stands for \"Local\" and \"G\" stands for \"Global\".",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "When unpacking arguments, the number of items in the list must exactly match the number of parameters in the function.",
+        "o": [
+          "True",
+          "False"
+        ],
+        "a": 0,
+        "tf": 1
+      },
+      {
+        "q": "Which of the following defines a correct lambda function?",
+        "o": [
+          "lambda x, y: x + y",
+          "def lambda(x, y): x + y",
+          "lambda: x + y",
+          "lambda(x, y) = x + y"
+        ],
+        "a": 0
+      },
+      {
+        "q": "Which of the following string methods returns a capitalized version of a string?",
+        "o": [
+          ".upper()",
+          ".capitalize()",
+          ".title()",
+          ".replace()"
+        ],
+        "a": 1
+      },
+      {
+        "q": "What will this print?\nname = \"AI\"\nprint(f\"Welcome to {name} Course!\")",
+        "o": [
+          "Welcome to {name} Course!",
+          "Welcome to AI Course!",
+          "Welcome Course to AI!",
+          "Error"
+        ],
+        "a": 1
+      },
+      {
+        "q": "In the LEGB scope rule, which of the following is not a scope type?",
+        "o": [
+          "Local",
+          "Enclosed",
+          "Global",
+          "Base"
+        ],
+        "a": 3
+      },
+      {
+        "q": "What will this function print?\ndef show(*args):\n    print(args)\nshow(1, 2, 3)",
+        "o": [
+          "[1, 2, 3]",
+          "(1, 2, 3)",
+          "1 2 3",
+          "Error"
+        ],
+        "a": 1
+      },
+      {
+        "q": "What will this output?\ndef info(**kwargs):\n    print(kwargs)\ninfo(name=\"Roa\", score=95)",
+        "o": [
+          "('Roa', 95)",
+          "{'name': 'Roa', 'score': 95}",
+          "['Roa', 95]",
+          "Error"
+        ],
+        "a": 1
+      },
+      {
+        "q": "What is the result of the following code?\ndef add(a, b):\n    return a + b\ndata = [10, 20]\nprint(add(*data))",
+        "o": [
+          "[10, 20]",
+          "1020",
+          "30",
+          "Error"
+        ],
+        "a": 2
+      }
+    ]
+  },
+  {
+    "n": "المقالي والأكواد",
+    "s": "Coding & Short Answers",
+    "essay": true,
+    "q": [
+      {
+        "q": "Define Artificial Intelligence in your own words. (عرّف الذكاء الاصطناعي بأسلوبك)",
+        "a": "It is a branch of computer science focused on building computational systems that can think, learn from patterns in data, and make automated decisions to mimic or enhance human problem-solving capabilities.\n\nبالعربي: فرع من علوم الكمبيوتر يركز على بناء أنظمة حاسوبية قادرة على التفكير، والتعلم من أنماط البيانات، واتخاذ قرارات ذكية لمحاكاة أو تعزيز قدرات الإنسان في حل المشكلات.",
+        "desc": "تعريف الذكاء الاصطناعي وأهدافه الأساسية",
+        "isCode": false
+      },
+      {
+        "q": "State one ethical concern that arises with the increasing use of AI. (اذكر مشكلة أخلاقية تظهر مع زيادة استخدام AI)",
+        "a": "Algorithmic Bias: If training datasets contain historical human prejudices or imbalances, the AI model will automate, amplify, and replicate discriminatory outcomes in critical processes like hiring, bank lending, or criminal justice.\n\nبالعربي: التحيز الخوارزمي (Algorithmic Bias): إذا احتوت بيانات التدريب على تحيزات بشرية سابقة، سيكرر النموذج نفس التمييز في التوظيف أو منح القروض البنكية.",
+        "desc": "الاعتبارات الأخلاقية ومخاطر التحيز في الذكاء الاصطناعي",
+        "isCode": false
+      },
+      {
+        "q": "Give one example of a real-world AI application you use in daily life. (اذكر مثالاً حقيقياً لتطبيق AI تستخدمه يومياً)",
+        "a": "Navigation applications (such as Google Maps) using real-time predictive traffic routing, or Virtual Personal Assistants (like Siri and Google Assistant) that process voice commands via Natural Language Processing (NLP).\n\nبالعربي: تطبيقات الملاحة وتوقع الازدحام المروري، والمساعدات الصوتية الذكية التي تفهم الأوامر باللغة الطبيعية.",
+        "desc": "تطبيقات الذكاء الاصطناعي في حياتنا اليومية",
+        "isCode": false
+      },
+      {
+        "q": "What is the main difference between AI, Data Science, and Analytics? (ما الفرق الأساسي بين AI و Data Science و Analytics؟)",
+        "a": "1. Artificial Intelligence (AI): Focuses on automating intelligent behaviors and autonomous decision-making.\n2. Data Science: Blends machine learning algorithms, mathematics, and domain expertise to discover hidden patterns in complex raw data.\n3. Analytics: Focuses on examining structured historical data trends to deliver operational business insights.\n\nبالعربي: AI يركز على اتخاذ القرار الذكي والأتمتة، Data Science تركز على استكشاف واستخراج الأنماط، و Analytics تركز على تحليل البيانات التاريخية للأعمال.",
+        "desc": "المقارنة الجوهرية بين مجالات البيانات والذكاء الاصطناعي",
+        "isCode": false
+      },
+      {
+        "q": "Why is the data-driven paradigm considered essential for modern AI systems? (لماذا يُعد نهج الاعتماد على البيانات أساسياً في أنظمة AI الحديثة؟)",
+        "a": "Modern AI systems rely on statistical learning rather than hand-coded static rules. Massive data volume, variety, and velocity are mandatory for deep neural networks to extract generalized, highly accurate patterns from the real world.\n\nبالعربي: الأنظمة الحديثة تعتمد على التعلم الإحصائي بدلاً من القواعد اليدوية الثابتة، والشبكات العصبية العميقة تحتاج حجماً وتنوعاً كبيراً من البيانات للتعرف على الأنماط المعقدة بدقة.",
+        "desc": "أهمية منهجية الاعتماد على البيانات (Data-Driven Paradigm)",
+        "isCode": false
+      },
+      {
+        "q": "How did advances in data availability and computing power contribute to the resurgence of AI? (كيف ساهم توفر البيانات وقوة الحوسبة في نهضة AI؟)",
+        "a": "Early neural networks stalled during AI Winters due to small datasets and insufficient computing power. The modern renaissance brought massive Big Data (Volume, Velocity, Variety) paired with powerful GPUs and cloud infrastructure, allowing deep multi-layered architectures to train successfully.\n\nبالعربي: أبحاث الشبكات العصبية توقفت قديماً لضعف الحوسبة وقلة البيانات. عصر النهضة جلب بيانات ضخمة ومعالجات رسومية (GPUs) وحوسبة سحابية دربت الشبكات بنجاح.",
+        "desc": "أسباب انتهاء فترات الركود (AI Winters) وعودة الازدهار",
+        "isCode": false
+      },
+      {
+        "q": "In your opinion, which industry will be most transformed by AI in the next decade? Provide reasons. (ما الصناعة الأكثر تأثراً بالذكاء الاصطناعي في العقد القادم ولماذا؟)",
+        "a": "Healthcare: Utilizing computer vision for automated medical imaging diagnostics, and deep processing parameters for molecular drug discovery and personalized medicine, drastically improving diagnosis precision and treatment speed.\n\nبالعربي: قطاع الرعاية الصحية والطب؛ من خلال الرؤية الحاسوبية في تشخيص الأشعة، والتعلم العميق في اكتشاف الأدوية وتخصيص العلاج للمرضى.",
+        "desc": "القطاعات الأكثر تأثراً بالثورة التقنية للذكاء الاصطناعي",
+        "isCode": false
+      },
+      {
+        "q": "Looking at the future of AI, do you believe it poses more opportunities or more risks for society? Why? (هل يحمل مستقبل AI فرصاً أكثر أم مخاطر؟ ولماذا؟)",
+        "a": "It provides substantially more opportunities if governed with responsible ethics. While job displacement and automated bias present steep systemic hurdles, AI unlocks revolutionary breakthroughs in medicine, climate modeling, scientific research, and human capability augmentation.\n\nبالعربي: يوفر فرصاً أعظم إذا أدير بمسؤولية وأطر أخلاقية؛ فرغم تحديات الوظائف والتحيز، يقدم حلولاً ثورية في الطب والعلوم ورفع الإنتاجية.",
+        "desc": "الفرص والتحديات المستقبلية للمجتمعات مع الذكاء الاصطناعي",
+        "isCode": false
+      },
+      {
+        "q": "Do you think AI will create more jobs than it replaces, or vice versa? Support your answer with examples. (هل سيخلق AI وظائف أكثر مما يلغي؟)",
+        "a": "AI drives workforce evolution rather than simple elimination. Routine repetitive manual tasks are automated, while entirely new job ecosystems expand around AI engineering, model oversight, data curation, and ethical compliance frameworks.\n\nبالعربي: الذكاء الاصطناعي يطور بيئة العمل؛ فالأعمال الروتينية المتكررة تؤتمت، بينما تظهر وظائف جديدة في هندسة الأوامر وإدارة النماذج والحوكمة الأخلاقية.",
+        "desc": "أثر الذكاء الاصطناعي على سوق العمل والوظائف المستقبلية",
+        "isCode": false
+      },
+      {
+        "q": "Compare and contrast Classical AI, Machine Learning, and Deep Learning. Which approach is most impactful today and why? (قارن بين Classical AI و ML و Deep Learning)",
+        "a": "• Classical AI: Relies on hand-coded rules, symbolic reasoning, and static human logic.\n• Machine Learning: Statistical algorithms that extract patterns dynamically from structured data.\n• Deep Learning: Multi-layered Artificial Neural Networks that process vast unstructured data (images, text, audio).\nImpact: Deep Learning is the most impactful today because it scales with Big Data and drives state-of-the-art commercial breakthroughs.\n\nبالعربي: Classical AI قواعد يدوية، ML يتعلم إحصائياً من المميزات، و Deep Learning شبكات عصبية تستخرج الخصائص ذاتياً وهو الأكثر تأثيراً اليوم في الصوت والصورة واللغة.",
+        "desc": "المقارنة الشاملة بين فروع هرم الذكاء الاصطناعي",
+        "isCode": false
+      },
+      {
+        "q": "Create a set called colors with \"red\", \"green\", \"blue\" and add \"yellow\". (Sheet 3 Part 1)",
+        "a": "# 1. Create the initial set\ncolors = {\"red\", \"green\", \"blue\"}\n\n# 2. Add 'yellow' using add() method\ncolors.add(\"yellow\")\n\n# 3. Print the resulting set\nprint(colors)\n# Output: {'red', 'green', 'blue', 'yellow'}",
+        "desc": "إنشاء مجموعة بايثون (Set) وإضافة عنصر جديد باستخدام الدالة add()",
+        "isCode": true
+      },
+      {
+        "q": "Write code to find the intersection of {1, 2, 3} and {3, 4, 5}. (Sheet 3 Part 1)",
+        "a": "set1 = {1, 2, 3}\nset2 = {3, 4, 5}\n\n# Method 1: Using the & operator\nresult = set1 & set2\n\n# Method 2: Using the intersection() method\n# result = set1.intersection(set2)\n\nprint(\"Intersection:\", result)\n# Output: Intersection: {3}",
+        "desc": "إيجاد العناصر المشتركة (Intersection) بين مجموعتين باستخدام المعامل & أو الدالة intersection()",
+        "isCode": true
+      },
+      {
+        "q": "Safely remove \"apple\" from a set called fruits without raising an error. (Sheet 3 Part 1)",
+        "a": "fruits = {\"apple\", \"banana\", \"cherry\"}\n\n# Use discard() instead of remove() to avoid KeyError if the element doesn't exist\nfruits.discard(\"apple\")\n\nprint(fruits)\n# Output: {'banana', 'cherry'}\n\n# Calling discard again with a non-existent item will NOT raise an error:\nfruits.discard(\"apple\")  # Safe and silent!",
+        "desc": "الحذف الآمن لعنصر من المجموعة دون التسبب في خطأ (KeyError) باستخدام discard() بدلاً من remove()",
+        "isCode": true
+      },
+      {
+        "q": "Display the maximum and minimum values from {15, 5, 25, 10}. (Sheet 3 Part 1)",
+        "a": "numbers = {15, 5, 25, 10}\n\nmax_value = max(numbers)\nmin_value = min(numbers)\n\nprint(f\"Maximum value: {max_value}\")  # Output: 25\nprint(f\"Minimum value: {min_value}\")  # Output: 5",
+        "desc": "إيجاد وطباعة أكبر وأصغر قيمة في مجموعة رقمية باستخدام الدوال المدمجة max() و min()",
+        "isCode": true
+      },
+      {
+        "q": "Convert the tuple (2, 4, 4, 6, 8) into a set and print it. (Sheet 3 Part 1)",
+        "a": "my_tuple = (2, 4, 4, 6, 8)\n\n# Convert to set using set() constructor (duplicate 4 will be removed automatically)\nmy_set = set(my_tuple)\n\nprint(my_set)\n# Output: {2, 4, 6, 8}",
+        "desc": "تحويل Tuple يحتوي عناصر مكررة إلى Set لحذف التكرار تلقائياً",
+        "isCode": true
+      },
+      {
+        "q": "Use list comprehension to create a list of squares for all numbers from 1 to 10. (Sheet 3 Part 2)",
+        "a": "# List comprehension to generate squares of 1 to 10\nsquares = [x ** 2 for x in range(1, 11)]\n\nprint(squares)\n# Output: [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]",
+        "desc": "استخدام List Comprehension لتوليد مربعات الأرقام من 1 إلى 10 في سطر برمجي واحد وموجز",
+        "isCode": true
+      },
+      {
+        "q": "Write a list comprehension that extracts only even numbers from [1, 2, 3, 4, 5, 6, 7, 8]. (Sheet 3 Part 2)",
+        "a": "numbers = [1, 2, 3, 4, 5, 6, 7, 8]\n\n# Extract even numbers using a condition in list comprehension\neven_numbers = [x for x in numbers if x % 2 == 0]\n\nprint(even_numbers)\n# Output: [2, 4, 6, 8]",
+        "desc": "استخدام List Comprehension مع شرط if لفلترة واستخراج الأعداد الزوجية فقط من القائمة",
+        "isCode": true
+      },
+      {
+        "q": "Write a lambda function to calculate the cube of a number. (Sheet 4 Part 2)",
+        "a": "# Define a lambda function that returns the cube of x\ncube = lambda x: x ** 3\n\n# Testing the lambda function\nprint(\"Cube of 3:\", cube(3))  # Output: 27\nprint(\"Cube of 4:\", cube(4))  # Output: 64",
+        "desc": "تعريف دالة مجهولة الاسم (Lambda Function) لحساب مكعب رقم (x ** 3)",
+        "isCode": true
+      },
+      {
+        "q": "Create a function that accepts any number of arguments using *args and prints their sum. (Sheet 4 Part 2)",
+        "a": "def calculate_sum(*args):\n    # args is gathered into a tuple of positional arguments\n    total = sum(args)\n    print(f\"Arguments received: {args}\")\n    print(f\"Total sum: {total}\")\n    return total\n\n# Testing the function with different number of arguments\ncalculate_sum(10, 20, 30)         # Total sum: 60\ncalculate_sum(5, 15, 25, 35, 45)   # Total sum: 125",
+        "desc": "إنشاء دالة تستقبل عدداً متغيراً من المعاملات باستخدام *args وتقوم بحساب وطباعة مجموعها",
+        "isCode": true
+      }
+    ]
+  }
+];
+
+const BASE_SECTIONS = L.length;
+document.getElementById("cnt").textContent = BASE_SECTIONS + " أقسام · " + L.reduce((s, l) => s + l.q.length, 0) + " سؤال";
+const app = document.getElementById("app");
+let best = {};
+try { best = JSON.parse(localStorage.getItem("ai_best") || "{}"); } catch(e) {}
+const save = () => { try { localStorage.setItem("ai_best", JSON.stringify(best)); } catch(e) {} };
+
+// Persistent Global Mistakes Store
+let globalMistakes = new Set();
+try {
+  const storedMistakes = JSON.parse(localStorage.getItem("ai_global_mistakes") || "[]");
+  if (Array.isArray(storedMistakes)) {
+    storedMistakes.forEach(item => {
+      if (typeof item === "string") globalMistakes.add(item);
+      else if (item && item.q) globalMistakes.add(item.q);
+    });
+  }
+} catch(e) {}
+
+function saveGlobalMistakes() {
+  try {
+    const list = [];
+    globalMistakes.forEach(qText => {
+      let foundLi = -1, foundQi = -1;
+      for (let l = 0; l < BASE_SECTIONS && l < L.length; l++) {
+        const idx = L[l].q.findIndex(item => item.q === qText);
+        if (idx !== -1) { foundLi = l; foundQi = idx; break; }
+      }
+      list.push({ q: qText, li: foundLi, qi: foundQi });
+    });
+    localStorage.setItem("ai_global_mistakes", JSON.stringify(list));
+  } catch(e) {}
+}
+
+function recordGlobalMistake(q) {
+  if (!q || !q.q) return;
+  globalMistakes.add(q.q);
+  saveGlobalMistakes();
+}
+
+function removeGlobalMistake(q) {
+  if (!q || !q.q) return;
+  if (globalMistakes.has(q.q)) {
+    globalMistakes.delete(q.q);
+    saveGlobalMistakes();
+  }
+}
+
+function getGlobalMistakeQuestions() {
+  const result = [];
+  const seen = new Set();
+  for (let l = 0; l < BASE_SECTIONS && l < L.length; l++) {
+    for (let qIdx = 0; qIdx < L[l].q.length; qIdx++) {
+      const q = L[l].q[qIdx];
+      if (globalMistakes.has(q.q) && !seen.has(q.q)) {
+        seen.add(q.q);
+        result.push(q);
+      }
+    }
+  }
+  return result;
+}
+
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+const icons = ["🤖", "🔵", "⚡", "🧩", "💻"];
+const acs = ["#23A095", "#4C8DD9", "#8A7BE0", "#E8954F", "#DB6A95", "#4DB57C"];
+const RM = matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+const ART = [
+  // 0: AI Neural Network / Brain
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="45" cy="35" r="9"/><circle cx="45" cy="75" r="9"/><circle cx="100" cy="25" r="9"/><circle cx="100" cy="55" r="9"/><circle cx="100" cy="85" r="9"/><circle cx="155" cy="40" r="9"/><circle cx="155" cy="70" r="9"/><line x1="54" y1="35" x2="91" y2="25"/><line x1="54" y1="35" x2="91" y2="55"/><line x1="54" y1="35" x2="91" y2="85"/><line x1="54" y1="75" x2="91" y2="25"/><line x1="54" y1="75" x2="91" y2="55"/><line x1="54" y1="75" x2="91" y2="85"/><line x1="109" y1="25" x2="146" y2="40"/><line x1="109" y1="55" x2="146" y2="40"/><line x1="109" y1="85" x2="146" y2="70"/><line x1="109" y1="55" x2="146" y2="70"/></g><circle cx="45" cy="35" r="4" fill="currentColor"/><circle cx="100" cy="55" r="4" fill="currentColor"/><circle cx="155" cy="70" r="4" fill="currentColor"/></svg>',
+  // 1: Sets Venn Diagram
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3"><circle cx="82" cy="55" r="38"/><circle cx="118" cy="55" r="38"/><path d="M100 28a38 38 0 0 1 0 54 38 38 0 0 1 0-54" fill="currentColor" opacity=".2"/></g><circle cx="100" cy="55" r="4" fill="currentColor"/><circle cx="68" cy="55" r="3" fill="currentColor"/><circle cx="132" cy="55" r="3" fill="currentColor"/></svg>',
+  // 2: List Comprehension [x for x in seq]
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M40 25h-15v60h15"/><path d="M160 25h15v60h-15"/><text x="100" y="63" font-family="monospace" font-size="22" font-weight="bold" fill="currentColor" text-anchor="middle" stroke="none">[x for x]</text></g><circle cx="50" cy="85" r="3" fill="currentColor" opacity=".5"/><circle cx="150" cy="25" r="3" fill="currentColor" opacity=".5"/></svg>',
+  // 3: Functions, Lambda & Unpacking
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="24" width="60" height="62" rx="8"/><path d="M48 42l12 12-12 12"/><line x1="68" y1="66" x2="78" y2="66"/><path d="M125 55h45m-10-10l10 10-10 10"/><circle cx="160" cy="30" r="14" opacity=".2" fill="currentColor"/></g><text x="145" y="42" font-family="sans-serif" font-size="16" font-weight="bold" fill="currentColor" stroke="none">λ</text></svg>',
+  // 4: Coding Tasks & Flashcards
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="25" y="16" width="150" height="78" rx="8"/><line x1="25" y1="36" x2="175" y2="36"/><circle cx="42" cy="26" r="3" fill="currentColor"/><circle cx="54" cy="26" r="3" fill="currentColor"/><circle cx="66" cy="26" r="3" fill="currentColor"/><path d="M55 58l-12 10 12 10"/><path d="M85 58l12 10-12 10"/><line x1="74" y1="54" x2="66" y2="82"/></g></svg>',
+  // 5: Boss Trophy
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M72 14h56v26c0 16-12 28-28 28S72 56 72 40z"/><path d="M72 22H52c0 16 8 24 22 26M128 22h20c0 16-8 24-22 26"/><path d="M100 68v14M80 94h40M88 82h24"/></g><path d="M100 24l5 10 11 1-8 8 2 11-10-6-10 6 2-11-8-8 11-1z" fill="currentColor" opacity=".5"/></svg>'
+];
+
+function confetti(x, y, n) {
+  const cs = ["#00FF9D", "#5ED6C1", "#23A095", "#8A7BE0", "#FF9F43"];
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement("i");
+    d.className = "fx";
+    d.style.background = cs[i % 5];
+    document.body.appendChild(d);
+    const a = Math.random() * 6.283, v = 80 + Math.random() * 170;
+    d.animate([
+      { transform: `translate(${x}px,${y}px) scale(1)`, opacity: 1 },
+      { transform: `translate(${x + Math.cos(a) * v}px,${y + Math.sin(a) * v + 90}px) rotate(${Math.random() * 540}deg) scale(.4)`, opacity: 0 }
+    ], { duration: 900 + Math.random() * 500, easing: "cubic-bezier(.2,.8,.3,1)" }).onfinish = () => d.remove();
+  }
+}
+
+let li, qi, log = [], wq = [], userAnswers = {};
+
+function home() {
+  app.style.removeProperty("--ac");
+  while (L.length > BASE_SECTIONS) L.pop();
+  
+  const mistakeList = getGlobalMistakeQuestions();
+  const mistakesCount = mistakeList.length;
+
+  app.innerHTML = '<div class="grid">' + L.map((l, i) => {
+    const p = best[i] != null ? Math.round((best[i] / l.q.length) * 100) : 0;
+    return `<button class="lec" data-i="${i}" style="--ac:${acs[i] || "var(--primary)"};--d:${i * 80}ms">
+      <div class="art">${ART[i] || ""}</div>
+      <div class="ring" style="--p:${p}">
+        <div class="badge">${icons[i] || (i + 1)}</div>
+      </div>
+      <div>
+        <b>${l.n}</b>
+        <span>${esc(l.s)}</span>
+        <small>${l.q.length} سؤال${best[i] != null ? " · " + (l.essay ? "تمت مراجعتها" : "أفضل نتيجة " + best[i] + "/" + l.q.length) : ""}</small>
+        <i class="mini"><b style="width:${p}%"></b></i>
+      </div>
+    </button>`;
+  }).join("") + `
+    <div class="lec mistakes-card ${mistakesCount > 0 ? "has-mistakes" : "empty"}" id="mistakes-card" role="button" tabindex="${mistakesCount > 0 ? "0" : "-1"}" style="--ac:var(--bad);--d:${BASE_SECTIONS * 80}ms">
+      <div class="art">
+        <svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="100" cy="55" r="38"/><circle cx="100" cy="55" r="24"/><circle cx="100" cy="55" r="10"/><path d="M100 12v8M100 90v8M57 55h8M135 55h8"/></g><circle cx="100" cy="55" r="4" fill="currentColor"/></svg>
+      </div>
+      <div class="ring" style="--p:${mistakesCount > 0 ? 100 : 0}">
+        <div class="badge">${mistakesCount > 0 ? "🎯" : "🎉"}</div>
+      </div>
+      <div style="flex:1;min-width:0;padding-inline-end:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <b>مراجعة كل الأخطاء 🎯</b>
+          ${mistakesCount > 0 ? '<button type="button" class="btn-clear-mistakes" id="btn-clear-mistakes" title="مسح سجل الأخطاء">مسح السجل 🗑️</button>' : ''}
+        </div>
+        <span>All Mistakes Review</span>
+        <small>${mistakesCount > 0 ? `${mistakesCount} سؤال غلط من كل المحاضرات · اضغط لتصفيتها` : "مفيش أخطاء حالياً 🎉 · أداؤك ممتاز في كل الأقسام!"}</small>
+        ${mistakesCount > 0 ? `<i class="mini"><b style="width:100%;background:var(--bad)!important"></b></i>` : ""}
+      </div>
+    </div>
+    <button class="lec boss" id="boss" style="--ac:#E8954F;--d:${(BASE_SECTIONS + 1) * 80}ms">
+      <div class="art">${ART[5]}</div>
+      <div class="ring" style="--p:100"><div class="badge">🏆</div></div>
+      <div>
+        <b>التحدي الشامل ⚡</b>
+        <span>Mixed Challenge</span>
+        <small>20 سؤال عشوائي من كل الشيتات والمحاضرات</small>
+      </div>
+    </button>
+  </div>`;
+  
+  app.querySelectorAll(".lec:not(.boss):not(.mistakes-card)").forEach(b => b.onclick = () => start(+b.dataset.i));
+
+  const mistakeCard = document.getElementById("mistakes-card");
+  if (mistakeCard && mistakesCount > 0) {
+    const launchMistakes = () => {
+      const qs = getGlobalMistakeQuestions();
+      if (!qs.length) return;
+      L.push({ n: "بنك الأخطاء الشامل", s: "All Mistakes Review (" + qs.length + " سؤال)", q: qs });
+      start(L.length - 1);
+    };
+    mistakeCard.onclick = (e) => {
+      if (e.target && e.target.closest("#btn-clear-mistakes")) return;
+      launchMistakes();
+    };
+    mistakeCard.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        launchMistakes();
+      }
+    };
+  }
+
+  const btnClear = document.getElementById("btn-clear-mistakes");
+  if (btnClear) {
+    btnClear.onclick = (e) => {
+      e.stopPropagation();
+      if (confirm("هل تريد بالتأكيد مسح وتفريغ سجل جميع الأخطاء المتراكمة؟")) {
+        globalMistakes.clear();
+        saveGlobalMistakes();
+        home();
+      }
+    };
+  }
+
+  document.getElementById("boss").onclick = () => {
+    const pool = L.filter(l => !l.essay).flatMap(l => l.q).sort(() => Math.random() - .5).slice(0, 20);
+    L.push({ n: "التحدي الشامل", s: "Mixed Challenge", q: pool });
+    start(L.length - 1);
+  };
+  scrollTo(0, 0);
+}
+
+function start(i) {
+  li = i;
+  qi = 0;
+  log = [];
+  wq = [];
+  userAnswers = {};
+  show();
+}
+
+function renderStrip() {
+  const n = L[li].q.length;
+  let pills = "";
+  for (let idx = 0; idx < n; idx++) {
+    const isCur = (idx === qi);
+    const ans = userAnswers[idx];
+    let stateCls = "";
+    if (isCur) {
+      stateCls = "active";
+    }
+    if (ans && ans.answered) {
+      if (ans.correct) stateCls += " ok";
+      else if (ans.peeked) stateCls += " peeked";
+      else stateCls += " bad";
+    }
+    pills += `<button type="button" class="q-pill ${stateCls}" data-qi="${idx}" role="tab" aria-selected="${isCur}" aria-label="السؤال ${idx + 1}">${idx + 1}</button>`;
+  }
+  return `<div class="q-strip-wrap">
+    <div class="q-strip-head">
+      <span class="q-strip-title">شريط الأسئلة والتنقل السريع</span>
+      <div class="q-strip-legend">
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:var(--primary)"></i> الحالي</span>
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:var(--ok)"></i> صحيح</span>
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:var(--bad)"></i> خطأ</span>
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:var(--gold)"></i> تم كشفها</span>
+      </div>
+    </div>
+    <div class="q-strip" id="q-strip" role="tablist">${pills}</div>
+  </div>`;
+}
+
+function updateMidStats() {
+  const mid = app.querySelector(".mid");
+  if (!mid) return;
+  const n = L[li].q.length;
+  if (L[li].essay) {
+    mid.innerHTML = `<div class="qr" style="--p:${((qi + 1) / n) * 100}"><span>${qi + 1}</span></div><span class="sc">📖 بطاقة ${qi + 1}/${n}</span>`;
+    return;
+  }
+  const scoreVal = Object.values(userAnswers).filter(a => a && a.correct && !a.peeked).length;
+  const errCount = Object.values(userAnswers).filter(a => a && a.answered && !a.correct).length;
+  
+  let streak = 0;
+  for (let idx = qi; idx >= 0; idx--) {
+    const a = userAnswers[idx];
+    if (a && a.correct && !a.peeked) streak++;
+    else if (a && a.answered) break;
+  }
+  
+  mid.innerHTML = `
+    <div class="qr" style="--p:${((qi + 1) / n) * 100}"><span>${qi + 1}</span></div>
+    <span class="sc">⭐ ${scoreVal}</span>
+    ${errCount > 0 ? `<div class="qr er" title="أخطاء" style="--p:${(errCount / n) * 100}"><span>✕${errCount}</span></div>` : ""}
+    ${streak >= 2 ? `<span class="sc fire">🔥 ${streak}</span>` : ""}
+  `;
+}
+
+function show() {
+  const l = L[li], q = l.q[qi], n = l.q.length;
+  app.style.setProperty("--ac", acs[li] || "var(--primary)");
+
+  if (l.essay) {
+    const ans = userAnswers[qi];
+    const isRevealed = ans && ans.revealed;
+    app.innerHTML = `
+      <div class="bar">
+        <span class="tag">${l.n}</span>
+        <div class="mid"></div>
+        <button class="link" id="back">الرجوع للأقسام</button>
+      </div>
+      <div class="prog"><i style="width:${((qi + 1) / n) * 100}%"></i></div>
+      ${renderStrip()}
+      <div class="q">
+        <div class="kind">بطاقة استذكار ${qi + 1} من ${n} · ${q.isCode ? "كود بايثون 💻" : "سؤال مقالي ونقاش 💡"}</div>
+        <h2 style="line-height:1.5;margin-bottom:18px;">${esc(q.q)}</h2>
+        <button class="btn" id="show-ans" style="margin:8px 0 14px;width:100%;font-size:16px;">${isRevealed ? "🙈 إخفاء الإجابة" : "👁️ إظهار الإجابة النموذجية"}</button>
+        <div id="ans-box" class="fb ok" style="display:${isRevealed ? "block" : "none"};margin:12px 0 20px;border-right:none;border-left:4px solid var(--ac);padding:14px 16px;background:rgba(35,160,149,.08);border-radius:8px;">
+          <strong style="display:block;margin-bottom:8px;color:var(--text);direction:rtl;text-align:right;font-size:14px;">
+            ${q.isCode ? "💻 الكود البرمجي النموذجي (Python):" : "💡 الإجابة النموذجية والشرح:"}
+          </strong>
+          ${q.desc ? `<div style="direction:rtl;text-align:right;margin-bottom:10px;font-size:14px;color:var(--text-sec);line-height:1.6;white-space:pre-wrap;">${esc(q.desc)}</div>` : ""}
+          ${q.isCode 
+            ? `<pre style="margin:0;padding:12px 14px;background:var(--surface-inset);border:1px solid var(--line);border-radius:6px;overflow-x:auto;font-family:var(--font-code);font-size:14px;line-height:1.55;color:var(--text);white-space:pre-wrap;direction:ltr;text-align:left;"><code>${esc(q.a)}</code></pre>` 
+            : `<div style="white-space:pre-wrap;text-align:left;direction:ltr;font-family:inherit;font-size:15px;line-height:1.6;">${esc(q.a)}</div>`
+          }
+        </div>
+        <div class="q-nav">
+          <button type="button" class="btn alt" id="btn-prev" ${qi === 0 ? "disabled" : ""}>→ السؤال السابق</button>
+          <span class="q-nav-info">${qi + 1} / ${n}</span>
+          <button type="button" class="btn" id="btn-next">${qi === n - 1 ? "إنهاء المراجعة 🎉" : "السؤال التالي ←"}</button>
+        </div>
+      </div>`;
+
+    document.getElementById("back").onclick = home;
+    const showBtn = document.getElementById("show-ans");
+    const ansBox = document.getElementById("ans-box");
+    showBtn.onclick = () => {
+      const cur = ansBox.style.display === "block";
+      ansBox.style.display = cur ? "none" : "block";
+      showBtn.textContent = cur ? "👁️ إظهار الإجابة النموذجية" : "🙈 إخفاء الإجابة";
+      userAnswers[qi] = { answered: true, revealed: !cur, correct: true };
+      const stripPill = document.querySelector(`.q-pill[data-qi="${qi}"]`);
+      if (stripPill) {
+        stripPill.className = `q-pill active ${!cur ? "ok" : ""}`;
+      }
+    };
+    document.getElementById("btn-prev").onclick = navPrev;
+    document.getElementById("btn-next").onclick = () => {
+      if (qi < n - 1) { qi++; show(); }
+      else finishEssay();
+    };
+    document.querySelectorAll(".q-pill").forEach(pill => {
+      pill.onclick = () => {
+        const target = +pill.dataset.qi;
+        if (target !== qi) { qi = target; show(); }
+      };
+    });
+    updateMidStats();
+    const act = document.querySelector(".q-pill.active");
+    if (act) act.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    return;
+  }
+
+  // Regular multiple choice / true-false question
+  const ans = userAnswers[qi];
+  const isAnswered = ans && ans.answered;
+
+  app.innerHTML = `
+    <div class="bar">
+      <span class="tag">${l.n}</span>
+      <div class="mid"></div>
+      <button class="link" id="back">الرجوع للأقسام</button>
+    </div>
+    <div class="prog"><i style="width:${((qi + 1) / n) * 100}%"></i></div>
+    ${renderStrip()}
+    <div class="q">
+      <div class="q-card-head">
+        <div class="kind">سؤال ${qi + 1} من ${n} · ${q.tf ? "صح أم غلط" : "اختيار من متعدد"}</div>
+        <button type="button" class="btn-peek" id="btn-peek" ${isAnswered ? "disabled" : ""}>
+          ${isAnswered ? (ans.peeked ? "👁️ تم كشف الإجابة" : "✓ تم إرسال الإجابة") : "👁️ إظهار الإجابة"}
+        </button>
+      </div>
+      <h2>${esc(q.q)}</h2>
+      <div class="${q.tf ? "tf" : ""}" id="opts">
+        ${q.o.map((o, k) => `<button type="button" class="opt" data-k="${k}">${esc(o)}</button>`).join("")}
+      </div>
+      <div id="fb"></div>
+      <div class="q-nav">
+        <button type="button" class="btn alt" id="btn-prev" ${qi === 0 ? "disabled" : ""}>→ السؤال السابق</button>
+        <span class="q-nav-info">${qi + 1} / ${n}</span>
+        <button type="button" class="btn" id="btn-next">${qi === n - 1 ? "إنهاء القسم 🎉" : "السؤال التالي ←"}</button>
+      </div>
+    </div>`;
+
+  document.getElementById("back").onclick = home;
+  document.getElementById("btn-prev").onclick = navPrev;
+  document.getElementById("btn-next").onclick = navNext;
+
+  document.querySelectorAll(".q-pill").forEach(pill => {
+    pill.onclick = () => {
+      const target = +pill.dataset.qi;
+      if (target !== qi) { qi = target; show(); }
+    };
+  });
+
+  const bs = document.querySelectorAll(".opt");
+  if (isAnswered) {
+    bs.forEach((b, k) => {
+      b.disabled = true;
+      if (k === q.a) b.classList.add("ok");
+      else if (ans.selected !== null && k === ans.selected) b.classList.add("bad");
+    });
+    const fb = document.getElementById("fb");
+    if (ans.correct) {
+      fb.innerHTML = `<div class="fb ok" role="status">✓ إجابتك صح</div>`;
+    } else if (ans.peeked) {
+      fb.innerHTML = `<div class="fb ok" role="status">👁️ تم كشف الإجابة الصحيحة: <em>${esc(q.o[q.a])}</em></div>`;
+    } else {
+      fb.innerHTML = `<div class="fb bad" role="status">✗ إجابتك غلط<em>Correct answer: ${esc(q.o[q.a])}</em></div>`;
+    }
+  } else {
+    bs.forEach(b => b.onclick = () => pick(+b.dataset.k));
+    const btnPeek = document.getElementById("btn-peek");
+    if (btnPeek) btnPeek.onclick = peekAnswer;
+  }
+
+  updateMidStats();
+  const act = document.querySelector(".q-pill.active");
+  if (act) act.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+}
+
+function pick(k) {
+  const q = L[li].q[qi];
+  if (userAnswers[qi]) return;
+  const good = (k === q.a);
+  userAnswers[qi] = { answered: true, selected: k, correct: good, peeked: false };
+  if (!good) {
+    if (!wq.some(item => item === q)) {
+      wq.push(q);
+      try { navigator.vibrate && navigator.vibrate(40); } catch(x) {}
+    }
+    recordGlobalMistake(q);
+  } else {
+    removeGlobalMistake(q);
+  }
+  
+  const bs = document.querySelectorAll(".opt");
+  bs.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.a) b.classList.add("ok");
+    else if (i === k) b.classList.add("bad");
+  });
+  
+  const fb = document.getElementById("fb");
+  if (fb) {
+    fb.innerHTML = `<div class="fb ${good ? "ok" : "bad"}" role="status">${
+      good ? "✓ إجابتك صح" : "✗ إجابتك غلط"
+    }${good ? "" : "<em>Correct answer: " + esc(q.o[q.a]) + "</em>"}</div>`;
+  }
+  
+  const btnPeek = document.getElementById("btn-peek");
+  if (btnPeek) {
+    btnPeek.disabled = true;
+    btnPeek.textContent = "✓ تم إرسال الإجابة";
+  }
+  
+  if (!RM && good) {
+    const r = document.querySelector(".opt.ok")?.getBoundingClientRect();
+    if (r) confetti(r.left + r.width / 2, r.top + r.height / 2, 26);
+  }
+  
+  const stripPill = document.querySelector(`.q-pill[data-qi="${qi}"]`);
+  if (stripPill) {
+    stripPill.className = `q-pill active ${good ? "ok" : "bad"}`;
+  }
+  
+  updateMidStats();
+}
+
+function peekAnswer() {
+  const q = L[li].q[qi];
+  if (userAnswers[qi]) return;
+  userAnswers[qi] = { answered: true, selected: null, correct: false, peeked: true };
+  if (!wq.some(item => item === q)) {
+    wq.push(q);
+  }
+  recordGlobalMistake(q);
+  
+  const bs = document.querySelectorAll(".opt");
+  bs.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.a) b.classList.add("ok");
+  });
+  
+  const fb = document.getElementById("fb");
+  if (fb) {
+    fb.innerHTML = `<div class="fb ok" role="status">👁️ تم كشف الإجابة الصحيحة: <em>${esc(q.o[q.a])}</em></div>`;
+  }
+  
+  const btnPeek = document.getElementById("btn-peek");
+  if (btnPeek) {
+    btnPeek.disabled = true;
+    btnPeek.textContent = "👁️ تم كشف الإجابة";
+  }
+  
+  const stripPill = document.querySelector(`.q-pill[data-qi="${qi}"]`);
+  if (stripPill) {
+    stripPill.className = "q-pill active peeked";
+  }
+  
+  updateMidStats();
+}
+
+function navPrev() {
+  if (qi > 0) {
+    qi--;
+    show();
+  }
+}
+
+function navNext() {
+  const n = L[li].q.length;
+  if (qi < n - 1) {
+    qi++;
+    show();
+  } else {
+    if (L[li].essay) finishEssay();
+    else finish();
+  }
+}
+
+function finishEssay() {
+  const n = L[li].q.length;
+  best[li] = n;
+  save();
+  app.innerHTML = `<div class="res">
+    <div>أتممت مراجعة</div>
+    <div class="n" style="--p:100"><span>${n}/${n}</span></div>
+    <p>🎉 أحسنت! راجعت جميع بطاقات الأكواد والأسئلة المقالية ونماذج إجاباتها بالتفصيل.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn" id="re">أعد المراجعة</button>
+      <button class="btn alt" id="hm">كل الأقسام</button>
+    </div>
+  </div>`;
+  document.getElementById("re").onclick = () => start(li);
+  document.getElementById("hm").onclick = home;
+  scrollTo(0, 0);
+  if (!RM) {
+    for (let i = 0; i < 4; i++) setTimeout(() => confetti(innerWidth * (.2 + i * .2), innerHeight * .3, 30), i * 250);
+  }
+}
+
+function finish() {
+  const l = L[li], n = l.q.length;
+  const scoreVal = Object.values(userAnswers).filter(a => a && a.correct && !a.peeked).length;
+  if (li < BASE_SECTIONS && (best[li] == null || scoreVal > best[li])) {
+    best[li] = scoreVal;
+    save();
+  }
+  const pct = Math.round((scoreVal / n) * 100);
+  const wrongCount = n - scoreVal;
+  
+  const rk = pct >= 90 ? ["👑", "AI Master", "أسطورة الذكاء الاصطناعي"] :
+             pct >= 75 ? ["⚡", "ML Expert", "مهندس ذكاء اصطناعي محترف"] :
+             pct >= 50 ? ["🧑‍💻", "AI Explorer", "باحث ذكاء اصطناعي واعد"] :
+                         ["🌱", "Novice", "راجع واستمر وهتوصل"];
+                         
+  app.innerHTML = `<div class="res">
+    <div>نتيجتك في ${l.n}</div>
+    <div class="rank">${rk[0]} <b>${rk[1]}</b><small>${rk[2]}</small></div>
+    <div class="rings">
+      <figure>
+        <div class="n" style="--p:${pct}"><span>${scoreVal}/${n}</span></div>
+        <figcaption>✅ صح</figcaption>
+      </figure>
+      <figure>
+        <div class="n n2" style="--p:${Math.round((wrongCount / n) * 100)}"><span>${wrongCount}</span></div>
+        <figcaption>❌ أخطاء أو تخطي</figcaption>
+      </figure>
+    </div>
+    <p>${pct >= 80 ? "ممتاز! أنت متمكن من هذا القسم" : pct >= 50 ? "أداء جيد، راجع الأسئلة التي أخطأت فيها بالأسفل" : "محتاج تراجع القسم ده مرة تانية وتحاول من جديد"}</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="btn" id="re">أعد الاختبار</button>
+      ${wq.length ? `<button class="btn" id="rw">🔁 راجع الأخطاء فقط (${wq.length})</button>` : ""}
+      <button class="btn alt" id="hm">كل الأقسام</button>
+    </div>
+    <div class="rev">
+      ${l.q.map((q, idx) => {
+        const a = userAnswers[idx];
+        const isGood = a && a.correct && !a.peeked;
+        const isSkipped = !a || !a.answered;
+        const isPeeked = a && a.peeked;
+        const tag = isGood ? "✓ إجابة صحيحة" : isSkipped ? "⏭️ تم التخطي" : isPeeked ? "👁️ تم كشف الإجابة" : "✗ إجابة خاطئة";
+        const cls = isGood ? "ok" : "bad";
+        return `<div class="${cls}">
+          <b>${idx + 1}. ${tag}</b>: ${esc(q.q)}
+          ${isGood ? "" : `<br><em style="display:inline-block;margin-top:6px;color:var(--text-sec)">الإجابة الصحيحة: ${esc(q.o[q.a])}</em>`}
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+  
+  document.getElementById("re").onclick = () => start(li);
+  document.getElementById("hm").onclick = home;
+  const rw = document.getElementById("rw");
+  if (rw && wq.length) {
+    rw.onclick = () => {
+      const qs = wq.slice();
+      L.push({ n: "مراجعة الأخطاء", s: "Review Mistakes", q: qs });
+      start(L.length - 1);
+    };
+  }
+  scrollTo(0, 0);
+  if (!RM && pct >= 80) {
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => confetti(innerWidth * (0.2 + i * 0.2), innerHeight * 0.3, 30), i * 250);
+    }
+  }
+}
+
+// Keyboard Navigation
+window.addEventListener("keydown", (e) => {
+  if (li === undefined || !document.querySelector(".q")) return;
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    navPrev();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    navNext();
+  }
+});
+
+// Touch Swipe Navigation
+let touchStartX = 0, touchStartY = 0;
+window.addEventListener("touchstart", (e) => {
+  if (e.touches && e.touches.length === 1) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+window.addEventListener("touchend", (e) => {
+  if (!touchStartX || !e.changedTouches || e.changedTouches.length === 0) return;
+  if (li === undefined || !document.querySelector(".q")) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  touchStartX = 0;
+  touchStartY = 0;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+    if (dx > 0) {
+      navPrev();
+    } else {
+      navNext();
+    }
+  }
+}, { passive: true });
+
+// Initial Render
+home();
+
+// Theme Toggle
+(function() {
+  const tgl = document.getElementById("tgl");
+  if (tgl) {
+    tgl.onclick = () => {
+      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", cur);
+      try { localStorage.setItem("ai_theme", cur); } catch(e){}
+    };
+  }
+})();
+</script>
+</body>
+</html>
